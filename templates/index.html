@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Brain Tumor Classification Using Deep Learning</title>
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            background-color: #f0f0f0;
+            text-align: center;
+            margin: 0;
+            padding: 0;
+        }
+        #container {
+            width: 60%;
+            margin: 50px auto;
+            background-color: #ffffff;
+            padding: 20px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            border-radius: 10px;
+        }
+        h1 {
+            color: #333333;
+        }
+        #result {
+            font-size: 18px;
+            margin-top: 20px;
+            color: #008000; /* Green color for positive result */
+        }
+        #image-preview {
+            max-width: 100%;
+            margin-top: 20px;
+        }
+    </style>
+</head>
+<body>
+    <div id="container">
+        <h1>Brain Tumor Classification</h1>
+        <form id="upload-form" action="/predict" method="post" enctype="multipart/form-data">
+            <label for="imageFormat">Select Image Format:</label>
+            <select name="imageFormat" id="imageFormat">
+                <option value="jpg">JPEG (jpg)</option>
+                <option value="jpeg">JPEG (jpeg)</option>
+                <option value="png">PNG (png)</option>
+                <!-- Add other image formats as needed -->
+            </select>
+            <br>
+            <input type="file" name="file" id="fileInput" accept="image/*" required>
+            <br>
+            <input type="submit" value="Predict">
+        </form>
+        <div id="result"></div>
+        <div id="image-preview"></div>
+    </div>
+
+    <script>
+        // JavaScript code for displaying the image and result on the same page
+        document.getElementById('upload-form').addEventListener('submit', function (e) {
+            e.preventDefault();
+            var form = e.target;
+            var formData = new FormData(form);
+
+            fetch(form.action, {
+                method: form.method,
+                body: formData
+            })
+            .then(response => response.json())
+            .then(data => {
+                // Display the result
+                document.getElementById('result').innerHTML = data.result;
+
+                // Display the image
+                var imagePreview = document.getElementById('image-preview');
+                var image = document.createElement('img');
+                image.src = URL.createObjectURL(formData.get('file'));
+                imagePreview.innerHTML = '';
+                imagePreview.appendChild(image);
+            })
+            .catch(error => {
+                console.error('Error:', error);
+            });
+        });
+    </script>
+</body>
+</html>
